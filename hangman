@@ -1,0 +1,52 @@
+import random
+
+words = ["hangman", "python", "computer", "program", "coding", "game", "learning","technology"]
+
+def choose(words):
+    return random.choice(words)
+
+def display_word(word, guessed):
+    displayed_word = ""
+    for letter in word:
+        if letter in guessed:
+            displayed_word += letter + " "
+        else:
+            displayed_word += "_ "
+    return displayed_word.strip()
+
+def hangman():
+    print("Welcome to Hangman!")
+    wordguess= choose(words)
+    guessed= []
+    incorrect= 0
+    attempts= 6
+    print("The word has {} letters.".format(len(wordguess)))
+    while incorrect < attempts:
+        print("\nWord: ", display_word(wordguess, guessed))
+        guess = input("Guess a letter: ").lower()
+        if len(guess) != 1 or not guess.isalpha():
+            print("Please enter a single letter.")
+            continue
+        if guess in guessed:
+            print("You already guessed that letter.")
+            continue
+        guessed.append(guess)
+        if guess in wordguess:
+            print("Correct!")
+            if all(letter in guessed for letter in wordguess):
+                print("\nCongratulations! You guessed the word:", wordguess)
+                break
+        else:
+            print("Incorrect guess.")
+            incorrect += 1
+            print("You have {} attempts left.".format(attempts - incorrect))
+    else:
+        print("\nSorry, you ran out of attempts. The word was:", wordguess)
+
+if __name__ == "__main__":
+    play_again ='yes'
+    while (play_again=='yes'):
+        hangman()
+        play_again_input = input("Do you want to play again? (yes/no): ").strip().lower()
+        if (play_again_input != "yes"):
+            play_again = "no"
