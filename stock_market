@@ -1,0 +1,86 @@
+import requests
+
+class StockPortfolio:
+    def __init__(self):
+        self.stocks = {}
+
+    def add_stock(self, symbol, quantity):
+        if symbol.upper() in self.stocks:
+            print(f"{symbol} is already in the portfolio.")
+            return
+        self.stocks[symbol.upper()] = {"name": "", "price": None, "quantity": quantity}
+
+    def remove_stock(self, symbol):
+        if symbol.upper() not in self.stocks:
+            print(f"{symbol} is not in the portfolio.")
+            return
+        del self.stocks[symbol.upper()]
+
+    def update_stock_data(self):
+        for symbol in self.stocks:
+            api_key = "44W1QDDL094AP631"
+            url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={symbol}&apikey={api_key}"
+            response = requests.get(url)
+            data = response.json()
+            if "Global Quote" in data:
+                self.stocks[symbol]["price"] = float(data["Global Quote"]["05. price"])
+
+    def display_portfolio(self):
+        print("Stock Portfolio:")
+        for symbol, stock in self.stocks.items():
+            print(f"Symbol: {symbol}, Price: ${stock['price']}, Quantity: {stock['quantity']}")
+        print()
+
+    def buy_stock(self, symbol, quantity):
+        if symbol.upper() not in self.stocks:
+            print(f"{symbol} is not in the portfolio.")
+            return
+        self.stocks[symbol.upper()]["quantity"] += quantity
+
+    def sell_stock(self, symbol, quantity):
+        if symbol.upper() not in self.stocks:
+            print(f"{symbol} is not in the portfolio.")
+            return
+        if self.stocks[symbol.upper()]["quantity"] < quantity:
+            print("Not enough quantity to sell.")
+            return
+        self.stocks[symbol.upper()]["quantity"] -= quantity
+
+# Example usage
+portfolio = StockPortfolio()
+
+while True:
+    print("\n1. Add Stock")
+    print("2. Remove Stock")
+    print("3. Buy Stock")
+    print("4. Sell Stock")
+    print("5. Display Portfolio")
+    print("6. Update Stock Data")
+    print("7. Exit")
+    choice = input("Enter your choice: ")
+
+    if choice == "1":
+        symbol = input("Enter stock symbol to add: ")
+        quantity = int(input("Enter quantity to add: "))
+        portfolio.add_stock(symbol, quantity)
+    elif choice == "2":
+        symbol = input("Enter stock symbol to remove: ")
+        portfolio.remove_stock(symbol)
+    elif choice == "3":
+        symbol = input("Enter stock symbol to buy: ")
+        quantity = int(input("Enter quantity to buy: "))
+        portfolio.buy_stock(symbol, quantity)
+    elif choice == "4":
+        symbol = input("Enter stock symbol to sell: ")
+        quantity = int(input("Enter quantity to sell: "))
+        portfolio.sell_stock(symbol, quantity)
+    elif choice == "5":
+        portfolio.display_portfolio()
+    elif choice == "6":
+        portfolio.update_stock_data()
+        print("Stock data updated.")
+    elif choice == "7":
+        print("Exiting...")
+        break
+    else:
+        print("Invalid choice. Please try again.")
