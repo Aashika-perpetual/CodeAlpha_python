@@ -1,0 +1,26 @@
+import os
+import shutil
+
+def organize_files(directory):
+    files = os.listdir(directory)
+    file_extensions = {}
+    for file in files:
+        if os.path.isdir(file):
+            continue
+        file_name, file_extension = os.path.splitext(file)
+        if file_extension not in file_extensions:
+            file_extensions[file_extension] = []
+        file_extensions[file_extension].append(file)
+    for extension, files_list in file_extensions.items():
+        if not extension:
+            continue
+        extension_folder = os.path.join(directory, extension.strip('.'))
+        os.makedirs(extension_folder, exist_ok=True)
+        for file in files_list:
+            source = os.path.join(directory, file)
+            destination = os.path.join(extension_folder, file)
+            shutil.move(source, destination)
+            print(f"Moved {file} to {extension_folder}")
+
+directory_to_organize = 'C:/Users/Hp/OneDrive/Documents'
+organize_files(directory_to_organize)
